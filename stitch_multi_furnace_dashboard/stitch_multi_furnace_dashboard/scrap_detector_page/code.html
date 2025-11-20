@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoSteel AI - Scrap Detector</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        .glassmorphic {
+            background: rgba(18, 34, 16, 0.4); /* background-dark with transparency */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(60, 243, 32, 0.15);
+        }
+        .dark .glassmorphic {
+             background: rgba(18, 34, 16, 0.4);
+        }
+        .light .glassmorphic {
+            background: rgba(246, 248, 245, 0.4); /* background-light with transparency */
+            border: 1px solid rgba(60, 243, 32, 0.3);
+        }
+        .purity-gauge {
+            background: conic-gradient(#3cf320 88%, transparent 88%);
+        }
+    </style>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#3cf320",
+              "background-light": "#f6f8f5",
+              "background-dark": "#122210",
+            },
+            fontFamily: {
+              "display": ["Space Grotesk", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<!-- Live Camera Viewport (Background) -->
+<div class="absolute inset-0 z-0 h-full w-full bg-cover bg-center" data-alt="Close-up of a pile of industrial scrap metal with various shapes and textures." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAFH771NajMoOF-6TgZtS79Uh6UyJ8vOUTZF_7_3V4dFLr-6SHiHqcbip60pQ3tJ3J1Fdmj72ww__5DiaG1WWguxjyhK2jNt5taPpkkrIsr1PDfcO-7UP6xWGnZLkDVbqJL4A_HDjnQeAZLwXbVXf47yHMGvONp4bg3JSMRAjZUXb2MPBsT73pCNInmU3FWtVkvdiUnZWhftYRaWQA3kF4NY943Cy8aPLuJYfWD29838R_skYdtupAL1fPftCeAS6BEyG7CVSuLGA');">
+<!-- Camera Feed Overlays -->
+<div class="absolute h-full w-full">
+<!-- Impurity Box 1: Rust -->
+<div class="absolute" style="top: 25%; left: 15%; width: 30%; height: 20%;">
+<div class="h-full w-full rounded border-2 border-[#FFBF00]"></div>
+<div class="absolute -top-6 left-0 flex items-center gap-1 rounded bg-[#FFBF00] px-2 py-0.5 text-xs font-bold text-black">
+<span>Rust</span>
+<span>92%</span>
+</div>
+</div>
+<!-- Impurity Box 2: Oil -->
+<div class="absolute" style="top: 50%; left: 55%; width: 35%; height: 25%;">
+<div class="h-full w-full rounded border-2 border-[#FFBF00]"></div>
+<div class="absolute -top-6 left-0 flex items-center gap-1 rounded bg-[#FFBF00] px-2 py-0.5 text-xs font-bold text-black">
+<span>Oil</span>
+<span>85%</span>
+</div>
+</div>
+<!-- Impurity Box 3: Plastic -->
+<div class="absolute" style="top: 65%; left: 10%; width: 25%; height: 15%;">
+<div class="h-full w-full rounded border-2 border-[#FFBF00]"></div>
+<div class="absolute -top-6 left-0 flex items-center gap-1 rounded bg-[#FFBF00] px-2 py-0.5 text-xs font-bold text-black">
+<span>Plastic</span>
+<span>95%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Top App Bar -->
+<header class="relative z-10 flex items-center p-4 pb-2">
+<div class="flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined text-white">menu</span>
+</div>
+<h1 class="flex-1 text-center text-lg font-bold leading-tight tracking-[-0.015em] text-white">Scrap Detector</h1>
+<div class="flex w-12 items-center justify-end">
+<button class="flex h-12 cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-transparent text-white">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- Purity Gauge -->
+<div class="relative z-10 p-4">
+<div class="purity-gauge ml-auto flex size-28 items-center justify-center rounded-full glassmorphic">
+<div class="flex size-[100px] flex-col items-center justify-center rounded-full bg-background-dark">
+<span class="text-3xl font-bold text-primary">88%</span>
+<span class="text-xs font-medium uppercase text-white/70">Purity</span>
+</div>
+</div>
+</div>
+<!-- Bottom Sheet / Control Panel -->
+<div class="absolute bottom-0 left-0 z-20 h-auto w-full">
+<div class="flex flex-col items-stretch pt-4 glassmorphic rounded-t-xl">
+<button class="flex h-5 w-full items-center justify-center">
+<div class="h-1 w-9 rounded-full bg-primary/30"></div>
+</button>
+<div class="flex flex-col gap-4 p-4">
+<!-- Capture Button -->
+<div class="flex justify-center py-2">
+<button class="flex size-20 items-center justify-center rounded-full border-4 border-primary/20 bg-primary/20 p-2 shadow-lg shadow-primary/20 transition-transform active:scale-95">
+<div class="flex size-full items-center justify-center rounded-full bg-primary">
+<span class="material-symbols-outlined text-4xl text-black">camera</span>
+</div>
+</button>
+</div>
+<!-- Section Header -->
+<h3 class="text-lg font-bold leading-tight tracking-[-0.015em] text-white">Scrap History</h3>
+<!-- Carousel -->
+<div class="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+<div class="flex items-stretch gap-3 pb-2">
+<div class="flex h-full flex-1 flex-col gap-3 rounded-lg min-w-40">
+<div class="w-full aspect-square rounded-xl bg-cover bg-center" data-alt="Thumbnail of a previous scrap metal scan, showing metallic pieces." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdrHyfTKL47wyWdN0m-4s89WOqYb3H-YZI-dxvbUZLM_o3ZdYEe1qxWzZ1ZkEeCRQldkO0kvnlbi7cS_lhlQ8KUOS5e0kZsij9gbxxJOsfQrgnvEmvyqTV8oDcsmUkJmIRtW9qqTAO_Wb1Mkpk9N1dAhQr_dQBCubz2yBufYJKv6Bj7k5gAKOoxd0Y-h-MVJvWw8yUnKe3IZeERDHFLv54Z1th4iphx9ZL80upTaZXdSqbOYmNGj8DNL4AvGnjulaRKWshXX4bZQ");'></div>
+<div>
+<p class="text-base font-medium leading-normal text-white">Scan #742</p>
+<p class="text-sm font-normal leading-normal text-primary/80">Today, 3:45 PM - 88%</p>
+</div>
+</div>
+<div class="flex h-full flex-1 flex-col gap-3 rounded-lg min-w-40">
+<div class="w-full aspect-square rounded-xl bg-cover bg-center" data-alt="Thumbnail of a previous scrap metal scan, showing twisted metal bars." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD8skXlsU45QQ44dSo-8DH8mS6pKMowB3AnfXOp2-oJvxYD3H-k0kg9oq1yVQVE2ItBwRsM-1foz6mFBTkA56GOzDHQeCOblXFJVthYibolm-fo7g9ss8cXvYLsrZEHab60jU7VmLSoEVZ8fkBirzFcvT9j9YFERE5WkkHIhCUdI1v5LsoBgpKYkAIgjFCsRgc1Rxee5hbPp7eZOWjttDzpa28dRElbGG19_6oy7Ef68Q5Y8QtyWOqVRYaIeC-6Ddx5SH6ru6lo-A");'></div>
+<div>
+<p class="text-base font-medium leading-normal text-white">Scan #741</p>
+<p class="text-sm font-normal leading-normal text-primary/80">Today, 3:42 PM - 91%</p>
+</div>
+</div>
+<div class="flex h-full flex-1 flex-col gap-3 rounded-lg min-w-40">
+<div class="w-full aspect-square rounded-xl bg-cover bg-center" data-alt="Thumbnail of a previous scrap metal scan, showing a pile of rusty components." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD5_Stlow6eT2TbN-fwfb2-ZK3AfrzrB4E9pSJtEQAgMpy8DiQtzMzep9Mzzjfrx_7yng0Acc1ot4oY4rrXW2mWp9w53LjAQzdSn_yqQoQSwWcvbP-dGMw1N2PmGbE6XI0XevfIb1iSWmFlvxKDd5Rf34AU0phD0zYZ9Y8vWd6wK8Ium5tUs7lfp3DV5GvUtpD4xKC_8YlJ2L_sWhHmf5sdcmDzJyNbHVGgT0gr_joz_qgVaQ9hhcNS8yNB_zKOz2x681HWegWsbg");'></div>
+<div>
+<p class="text-base font-medium leading-normal text-white">Scan #740</p>
+<p class="text-sm font-normal leading-normal text-primary/80">Today, 3:39 PM - 85%</p>
+</div>
+</div>
+<div class="flex h-full flex-1 flex-col gap-3 rounded-lg min-w-40">
+<div class="w-full aspect-square rounded-xl bg-cover bg-center" data-alt="Thumbnail of a previous scrap metal scan, with a focus on old gears." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD7_1shZwEr_zbhu1r614MHTZhZTqUghMKz9vW6ftTCiYcAsPtrp8621REL3V4yOaq-dxb3lB1LTHwnvrAEANf-NIWugWfCrgHMxQ9yk_wUS5d8_2JN0kkHnhfHVfaWV8toKX9xmtezhgUMO91vZMX-AM-3nREZdA6rABSukMAL8k4DLgLnuAapMgAYlwhPg_vH3RUEpA2VtbaO2HeZ9HZmabAMbnJaS8nBAjMeijYqfvIpV6efgBlUw0Oi5khTxH-lRXK_Te2lcQ");'></div>
+<div>
+<p class="text-base font-medium leading-normal text-white">Scan #739</p>
+<p class="text-sm font-normal leading-normal text-primary/80">Today, 3:35 PM - 93%</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

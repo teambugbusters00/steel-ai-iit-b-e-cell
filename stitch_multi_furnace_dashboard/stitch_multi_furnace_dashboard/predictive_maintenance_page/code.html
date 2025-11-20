@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoSteel AI - Predictive Maintenance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    .glassmorphic {
+      background: rgba(42, 63, 40, 0.2);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(62, 84, 59, 0.5);
+    }
+    .glowing-border {
+      box-shadow: 0 0 2px 0px #3cf320, 0 0 4px 0px #3cf320, 0 0 8px 0px #3cf320;
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3cf320",
+            "background-light": "#f6f8f5",
+            "background-dark": "#122210",
+          },
+          fontFamily: {
+            "display": ["Space Grotesk"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-200">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<!-- Top App Bar -->
+<header class="flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-10 p-4 pb-3 justify-between border-b border-white/10">
+<div class="flex size-10 shrink-0 items-center justify-center">
+<span class="material-symbols-outlined text-white text-3xl">menu</span>
+</div>
+<h1 class="text-white text-xl font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Predictive Maintenance</h1>
+<div class="flex w-auto items-center justify-end gap-2">
+<p class="text-primary text-base font-bold leading-normal tracking-[0.015em] shrink-0 whitespace-nowrap">Rolling Mill #3</p>
+<span class="material-symbols-outlined text-primary">expand_more</span>
+</div>
+</header>
+<main class="p-4 space-y-4">
+<!-- Stats Cards -->
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-2 rounded-xl p-4 glassmorphic">
+<p class="text-white text-sm font-medium leading-normal">Remaining Useful Life</p>
+<p class="text-primary tracking-light text-3xl font-bold leading-tight">85%</p>
+<p class="text-white/70 text-sm font-medium leading-normal">~1200 hrs</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-4 glassmorphic">
+<p class="text-white text-sm font-medium leading-normal">Bearing Wear Score</p>
+<p class="text-white tracking-light text-3xl font-bold leading-tight">75/100</p>
+<p class="text-white/70 text-sm font-medium leading-normal">Moderate</p>
+</div>
+</div>
+<!-- Machine Vibration Heatmap -->
+<div>
+<h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-3 pt-2">Machine Vibration Heatmap</h3>
+<div class="w-full grow @container py-1 glassmorphic rounded-xl">
+<div class="w-full gap-1 overflow-hidden @[480px]:gap-2 aspect-[2/1] flex p-2">
+<div class="w-full bg-center bg-no-repeat bg-contain aspect-auto rounded-none flex-1" data-alt="Schematic of a rolling mill machine with red and orange glowing hotspots indicating areas of high vibration." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB_1LK5YLo_hdgthKNXNLt0Yr0UtwwgdzgUaGSbkMakRLBZyTa0HK3z-Qd37ISZ1osK46HrG-k6eme0tSEzDnDtpXg26Gj7k2rppPDIdEDu2LjwBimjDCEb6J6XmsBqtmy1jk5lahzJe_S_Bu0blKLiVPnJQOk4Tiet0RMV310JPU7bfSgkK5iN1AF1fTUBQe6bYpZ5zoe6jf58GAWLuuCCPYm4pGLYVCImpqvFhReDxEp-UufBhLK2BSbd_Vgptg7cJpipCX4Buw");'></div>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-2 rounded-xl border border-[#3e543b]/50 p-4 glassmorphic">
+<p class="text-white text-base font-medium leading-normal">Anomaly Detection</p>
+<p class="text-primary tracking-light text-[32px] font-bold leading-tight truncate glowing-border rounded-lg px-2 py-1 inline-block self-start">3 Alerts</p>
+<div class="flex gap-1 items-center">
+<p class="text-white/70 text-sm font-normal leading-normal">Last 24h</p>
+<span class="material-symbols-outlined text-primary text-base">arrow_upward</span>
+<p class="text-primary text-sm font-medium leading-normal">+5%</p>
+</div>
+<div class="flex min-h-[150px] flex-1 flex-col gap-8 pt-4">
+<svg fill="none" height="120" preserveaspectratio="none" viewbox="-3 0 478 122" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient gradientunits="userSpaceOnUse" id="chart-gradient-1" x1="236" x2="236" y1="1" y2="121">
+<stop stop-color="#3cf320" stop-opacity="0.2"></stop>
+<stop offset="1" stop-color="#3cf320" stop-opacity="0"></stop>
+</lineargradient>
+<filter id="glow">
+<fegaussianblur result="coloredBlur" stddeviation="2.5"></fegaussianblur>
+<femerge>
+<femergenode in="coloredBlur"></femergenode>
+<femergenode in="SourceGraphic"></femergenode>
+</femerge>
+</filter>
+</defs>
+<path d="M0 89C18.1538 89 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 73 108.923 73C127.077 73 127.077 33 145.231 33C163.385 33 163.385 81 181.538 81C199.692 81 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 98 290.462 98C308.615 98 308.615 121 326.769 121C344.923 121 344.923 1 363.077 1C381.231 1 381.231 61 399.385 61C417.538 61 417.538 99 435.692 99C453.846 99 453.846 25 472 25V121H326.769H0V89Z" fill="url(#chart-gradient-1)"></path>
+<path d="M0 89C18.1538 89 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 73 108.923 73C127.077 73 127.077 33 145.231 33C163.385 33 163.385 81 181.538 81C199.692 81 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 98 290.462 98C308.615 98 308.615 121 326.769 121C344.923 121 344.923 1 363.077 1C381.231 1 381.231 61 399.385 61C417.538 61 417.538 99 435.692 99C453.846 99 453.846 25 472 25" filter="url(#glow)" stroke="#3cf320" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl border border-[#3e543b]/50 p-4 glassmorphic">
+<p class="text-white text-base font-medium leading-normal">Temperature Deviation</p>
+<p class="text-white tracking-light text-[32px] font-bold leading-tight truncate">+2.1°C</p>
+<div class="flex gap-1 items-center">
+<p class="text-white/70 text-sm font-normal leading-normal">Last 24h</p>
+<span class="material-symbols-outlined text-primary text-base">arrow_upward</span>
+<p class="text-primary text-sm font-medium leading-normal">+1.5%</p>
+</div>
+<div class="flex min-h-[150px] flex-1 flex-col gap-8 pt-4">
+<svg fill="none" height="120" preserveaspectratio="none" viewbox="-3 0 478 122" width="100%" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 69C18.1538 69 18.1538 81 36.3077 81C54.4615 81 54.4615 101 72.6154 101C90.7692 101 90.7692 53 108.923 53C127.077 53 127.077 93 145.231 93C163.385 93 163.385 61 181.538 61C199.692 61 199.692 21 217.846 21C236 21 236 45 254.154 45C272.308 45 272.308 1 290.462 1C308.615 1 308.615 49 326.769 49C344.923 49 344.923 101 363.077 101C381.231 101 381.231 81 399.385 81C417.538 81 417.538 29 435.692 29C453.846 29 453.846 121 472 121V121H326.769H0V69Z" fill="url(#chart-gradient-1)"></path>
+<path d="M0 69C18.1538 69 18.1538 81 36.3077 81C54.4615 81 54.4615 101 72.6154 101C90.7692 101 90.7692 53 108.923 53C127.077 53 127.077 93 145.231 93C163.385 93 163.385 61 181.538 61C199.692 61 199.692 21 217.846 21C236 21 236 45 254.154 45C272.308 45 272.308 1 290.462 1C308.615 1 308.615 49 326.769 49C344.923 49 344.923 101 363.077 101C381.231 101 381.231 81 399.385 81C417.538 81 417.538 29 435.692 29C453.846 29 453.846 121 472 121" stroke="#3cf320" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl border border-[#3e543b]/50 p-4 glassmorphic">
+<p class="text-white text-base font-medium leading-normal">Maintenance Prediction</p>
+<p class="text-white tracking-light text-[32px] font-bold leading-tight truncate">Next: 2 Weeks</p>
+<p class="text-white/70 text-sm font-normal leading-normal">Next 3 Months</p>
+<div class="grid min-h-[150px] grid-flow-col gap-4 grid-rows-[1fr_auto] items-end justify-items-center px-3 pt-6">
+<div class="relative w-full h-full flex items-end">
+<div class="bg-primary/30 w-full rounded-t-sm" style="height: 25%;"></div>
+<div class="absolute inset-0 border-primary border-t-2 rounded-t-sm glowing-border" style="height: 25%; top: 75%"></div>
+</div>
+<p class="text-white/70 text-xs font-bold leading-normal tracking-[0.015em]">Month 1</p>
+<div class="relative w-full h-full flex items-end">
+<div class="bg-primary/30 w-full rounded-t-sm" style="height: 50%;"></div>
+<div class="absolute inset-0 border-primary border-t-2 rounded-t-sm glowing-border" style="height: 50%; top: 50%"></div>
+</div>
+<p class="text-white/70 text-xs font-bold leading-normal tracking-[0.015em]">Month 2</p>
+<div class="relative w-full h-full flex items-end">
+<div class="bg-primary/30 w-full rounded-t-sm" style="height: 80%;"></div>
+<div class="absolute inset-0 border-primary border-t-2 rounded-t-sm glowing-border" style="height: 80%; top: 20%"></div>
+</div>
+<p class="text-white/70 text-xs font-bold leading-normal tracking-[0.015em]">Month 3</p>
+</div>
+</div>
+</div>
+<!-- Alert History -->
+<div>
+<h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-3 pt-2">Alert History</h3>
+<div class="space-y-3 rounded-xl glassmorphic p-4 max-h-60 overflow-y-auto">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-yellow-400 text-2xl">warning</span>
+<div class="flex-1">
+<p class="text-white font-medium">High Vibration Detected - Axis B</p>
+<p class="text-white/60 text-sm">2 hours ago</p>
+</div>
+<span class="material-symbols-outlined text-white/70">chevron_right</span>
+</div>
+<div class="w-full h-px bg-white/10"></div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-blue-400 text-2xl">build_circle</span>
+<div class="flex-1">
+<p class="text-white font-medium">Scheduled Lubrication Due</p>
+<p class="text-white/60 text-sm">Yesterday</p>
+</div>
+<span class="material-symbols-outlined text-white/70">chevron_right</span>
+</div>
+<div class="w-full h-px bg-white/10"></div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-red-500 text-2xl">error</span>
+<div class="flex-1">
+<p class="text-white font-medium">Critical Over-Temp - Bearing #4</p>
+<p class="text-white/60 text-sm">3 days ago</p>
+</div>
+<span class="material-symbols-outlined text-white/70">chevron_right</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Spacer for bottom nav -->
+<div class="h-24"></div>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 p-2 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-t border-white/10">
+<div class="flex justify-around items-center">
+<button class="flex flex-col items-center justify-center gap-1 text-white/70 w-20">
+<span class="material-symbols-outlined text-2xl">dashboard</span>
+<span class="text-xs">Overview</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-primary w-20">
+<span class="material-symbols-outlined text-2xl">build</span>
+<span class="text-xs font-bold">Maintenance</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-white/70 w-20">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+<span class="text-xs">Analytics</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-white/70 w-20">
+<span class="material-symbols-outlined text-2xl">settings</span>
+<span class="text-xs">Settings</span>
+</button>
+</div>
+</nav>
+</div>
+</body></html>
