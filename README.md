@@ -6,7 +6,7 @@ EcoSteel AI – Lite Version (Green Monitor)
 **Real-time DRI-EAF Monitoring & CO₂ Calculator | ESP32 MVP**  
 
 
-## One-Line Pitch
+## Please check out - Video Link(https://drive.google.com/file/d/1p8tSm2MBFwFz-v2GakGSMCbZ944zaH0J/view?usp=sharing)
 ₹6,800 ESP32 system that shows live temperature, current, kWh/ton, scrap purity, and CO₂ emissions for Indian mini-mills — the exact foundation of EcoSteel Lite (₹99k) and Pro (₹4 lakh) commercial products.
 
 ## Hardware Components (exactly as in photo)
