@@ -77,12 +77,14 @@ const moltenMetalFragmentShader = `
 // Particle system for smoke
 function SmokeParticles({ emissions }: { emissions: number }) {
   const particlesRef = useRef<THREE.Points>(null);
+  const maxParticles = 50; // Fixed maximum particle count
 
   useFrame((state) => {
     if (particlesRef.current) {
       const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
+      const activeParticles = Math.min(Math.floor(emissions / 5) + 10, maxParticles);
 
-      for (let i = 0; i < positions.length; i += 3) {
+      for (let i = 0; i < activeParticles * 3; i += 3) {
         positions[i + 1] += 0.01; // Rise up
 
         if (positions[i + 1] > 8) {
@@ -92,19 +94,24 @@ function SmokeParticles({ emissions }: { emissions: number }) {
         }
       }
 
+      // Hide inactive particles by moving them far away
+      for (let i = activeParticles * 3; i < positions.length; i += 3) {
+        positions[i] = 10000; // Move far away
+        positions[i + 1] = 10000;
+        positions[i + 2] = 10000;
+      }
+
       particlesRef.current.geometry.attributes.position.needsUpdate = true;
     }
   });
-
-  const particleCount = Math.floor(emissions / 5) + 10;
 
   return (
     <points ref={particlesRef}>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={particleCount}
-          array={new Float32Array(particleCount * 3).map((_, i) => {
+          count={maxParticles}
+          array={new Float32Array(maxParticles * 3).map((_, i) => {
             if (i % 3 === 0) return (Math.random() - 0.5) * 0.8; // x
             if (i % 3 === 1) return 5 + Math.random() * 2; // y
             return (Math.random() - 0.5) * 0.8; // z
@@ -127,13 +134,15 @@ function SmokeParticles({ emissions }: { emissions: number }) {
 function GasEmissionEffect({ emissions, position }: { emissions: number; position: [number, number, number] }) {
   const gasParticlesRef = useRef<THREE.Points>(null);
   const gasVolumeRef = useRef<THREE.Mesh>(null);
+  const maxParticles = 30; // Fixed maximum particle count
 
   useFrame((state) => {
     // Animate gas particles
     if (gasParticlesRef.current) {
       const positions = gasParticlesRef.current.geometry.attributes.position.array as Float32Array;
+      const activeParticles = Math.min(Math.floor(emissions / 10) + 5, maxParticles);
 
-      for (let i = 0; i < positions.length; i += 3) {
+      for (let i = 0; i < activeParticles * 3; i += 3) {
         positions[i + 1] += 0.02; // Rise faster than smoke
         positions[i] += (Math.random() - 0.5) * 0.01; // Slight drift
         positions[i + 2] += (Math.random() - 0.5) * 0.01;
@@ -143,6 +152,13 @@ function GasEmissionEffect({ emissions, position }: { emissions: number; positio
           positions[i] = position[0] + (Math.random() - 0.5) * 0.5;
           positions[i + 2] = position[2] + (Math.random() - 0.5) * 0.5;
         }
+      }
+
+      // Hide inactive particles by moving them far away
+      for (let i = activeParticles * 3; i < positions.length; i += 3) {
+        positions[i] = 10000; // Move far away
+        positions[i + 1] = 10000;
+        positions[i + 2] = 10000;
       }
 
       gasParticlesRef.current.geometry.attributes.position.needsUpdate = true;
@@ -156,7 +172,6 @@ function GasEmissionEffect({ emissions, position }: { emissions: number; positio
     }
   });
 
-  const particleCount = Math.floor(emissions / 10) + 5;
   const isHighEmission = emissions > 60;
 
   return (
@@ -166,8 +181,8 @@ function GasEmissionEffect({ emissions, position }: { emissions: number; positio
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
-            count={particleCount}
-            array={new Float32Array(particleCount * 3).map((_, i) => {
+            count={maxParticles}
+            array={new Float32Array(maxParticles * 3).map((_, i) => {
               if (i % 3 === 0) return (Math.random() - 0.5) * 0.5; // x
               if (i % 3 === 1) return Math.random() * 2; // y
               return (Math.random() - 0.5) * 0.5; // z
@@ -1903,263 +1918,289 @@ export default function DigitalTwin() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
-          {/* Main 3D Canvas - Made Bigger */}
-          <div className="lg:col-span-10">
-            <Card className="bg-black border-gray-800 overflow-hidden">
-              <Canvas
-                shadows
-                camera={{ position: [5, 5, 5], fov: 60 }}
-                gl={{ antialias: true, alpha: false }}
-                className="w-full h-[85vh] lg:h-[90vh]"
-                data-testid="canvas-3d-twin"
-              >
-                <Suspense fallback={null}>
-                  <Scene
-                    sensorData={sensorData}
-                    selectedFurnace={selectedFurnace}
-                    cameraView={cameraView}
-                    showCrossSection={showCrossSection}
-                    forecastMode={forecastMode}
-                    emergencyMode={emergencyMode}
-                    failureScenario={failureScenario}
-                  />
-                </Suspense>
-              </Canvas>
-            </Card>
+          {/* Main 3D Canvas and Video - Made Much Bigger */}
+          <div className="lg:col-span-12">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              {/* 3D Simulation */}
+              <Card className="bg-black border-gray-800 overflow-hidden">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-white text-xl">3D Digital Twin Simulation</CardTitle>
+                </CardHeader>
+                <Canvas
+                  shadows
+                  camera={{ position: [5, 5, 5], fov: 60 }}
+                  gl={{ antialias: true, alpha: false }}
+                  className="w-full h-[70vh] xl:h-[80vh]"
+                  data-testid="canvas-3d-twin"
+                >
+                  <Suspense fallback={null}>
+                    <Scene
+                      sensorData={sensorData}
+                      selectedFurnace={selectedFurnace}
+                      cameraView={cameraView}
+                      showCrossSection={showCrossSection}
+                      forecastMode={forecastMode}
+                      emergencyMode={emergencyMode}
+                      failureScenario={failureScenario}
+                    />
+                  </Suspense>
+                </Canvas>
+              </Card>
+
+              {/* Video Player - rr.mp4 */}
+              <Card className="bg-black border-gray-800 overflow-hidden">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-white text-xl">Process Video</CardTitle>
+                </CardHeader>
+                <div className="p-4">
+                  <video
+                    controls
+                    className="w-full rounded-lg bg-black"
+                    style={{ height: '70vh', maxHeight: '80vh' }}
+                  >
+                    <source src="/rr.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </Card>
+            </div>
           </div>
 
-          {/* Right Panel */}
-          <div className="lg:col-span-2 space-y-4">
-            <Card className="bg-black border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white text-base">Timeline Control</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setPlaybackIndex(Math.max(0, playbackIndex - 10))}>
-                    <SkipBack className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant={playbackMode ? "default" : "outline"}
-                    size="sm"
-                    onClick={togglePlayback}
-                  >
-                    {playbackMode ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => setPlaybackIndex(Math.min(playbackData.length - 1, playbackIndex + 10))}>
-                    <SkipForward className="w-4 h-4" />
-                  </Button>
-                  <span className="text-sm ml-2">{playbackMode ? 'Playback' : 'Live'}</span>
-                </div>
-                <Slider
-                  value={[playbackMode && playbackData.length > 0 ? (playbackIndex / playbackData.length) * 100 : 100]}
-                  onValueChange={(value) => {
-                    if (playbackMode && playbackData.length > 0) {
-                      const newIndex = Math.floor((value[0] / 100) * playbackData.length);
-                      setPlaybackIndex(newIndex);
-                      setSensorData(playbackData[newIndex]);
+          {/* Control Panel - Moved Below */}
+          <div className="lg:col-span-12 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+              {/* Right Panel Content */}
+              <Card className="bg-black border-gray-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-base">Timeline Control</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setPlaybackIndex(Math.max(0, playbackIndex - 10))}>
+                      <SkipBack className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant={playbackMode ? "default" : "outline"}
+                      size="sm"
+                      onClick={togglePlayback}
+                    >
+                      {playbackMode ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setPlaybackIndex(Math.min(playbackData.length - 1, playbackIndex + 10))}>
+                      <SkipForward className="w-4 h-4" />
+                    </Button>
+                    <span className="text-sm ml-2">{playbackMode ? 'Playback' : 'Live'}</span>
+                  </div>
+                  <Slider
+                    value={[playbackMode && playbackData.length > 0 ? (playbackIndex / playbackData.length) * 100 : 100]}
+                    onValueChange={(value) => {
+                      if (playbackMode && playbackData.length > 0) {
+                        const newIndex = Math.floor((value[0] / 100) * playbackData.length);
+                        setPlaybackIndex(newIndex);
+                        setSensorData(playbackData[newIndex]);
+                      }
+                    }}
+                    max={100}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="text-xs text-muted-foreground text-center">
+                    {playbackMode ?
+                      `${Math.floor(playbackIndex / 60)}h ${playbackIndex % 60}m ago` :
+                      'Live Data'
                     }
-                  }}
-                  max={100}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="text-xs text-muted-foreground text-center">
-                  {playbackMode ?
-                    `${Math.floor(playbackIndex / 60)}h ${playbackIndex % 60}m ago` :
-                    'Live Data'
-                  }
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card className="bg-black border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white text-base">Furnace Status</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">{sensorData.temperature.toFixed(1)}°C</div>
-                    <div className="text-xs text-muted-foreground">Temperature</div>
+              <Card className="bg-black border-gray-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-base">Furnace Status</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-primary">{sensorData.temperature.toFixed(1)}°C</div>
+                      <div className="text-xs text-muted-foreground">Temperature</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-500">{sensorData.emissions.toFixed(0)} ppm</div>
+                      <div className="text-xs text-muted-foreground">Emissions</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-500">{sensorData.vibration.toFixed(2)} Hz</div>
+                      <div className="text-xs text-muted-foreground">Vibration</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-500">{sensorData.purity}%</div>
+                      <div className="text-xs text-muted-foreground">Purity</div>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-500">{sensorData.emissions.toFixed(0)} ppm</div>
-                    <div className="text-xs text-muted-foreground">Emissions</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-500">{sensorData.vibration.toFixed(2)} Hz</div>
-                    <div className="text-xs text-muted-foreground">Vibration</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-green-500">{sensorData.purity}%</div>
-                    <div className="text-xs text-muted-foreground">Purity</div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Energy Usage</span>
-                    <span>{sensorData.energy} kW</span>
-                  </div>
-                  <div className="w-full bg-secondary rounded-full h-2">
-                    <div
-                      className="bg-primary h-2 rounded-full transition-all"
-                      style={{ width: `${(sensorData.energy / 1500) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white text-base">Sensor List</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Temperature</span>
-                  <Badge variant="secondary">{sensorData.temperature.toFixed(1)}°C</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Emissions</span>
-                  <Badge variant="secondary">{sensorData.emissions.toFixed(0)} ppm</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Vibration</span>
-                  <Badge variant="secondary">{sensorData.vibration.toFixed(2)} Hz</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Scrap Level</span>
-                  <Badge variant="secondary">{sensorData.scrapLevel}%</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Door Status</span>
-                  <Badge variant={sensorData.doorStatus === "open" ? "default" : "secondary"}>
-                    {sensorData.doorStatus}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white text-base">Alerts</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {sensorData.temperature > 1500 && (
-                  <div className="flex items-center gap-2 p-2 bg-destructive/10 rounded">
-                    <AlertTriangle className="w-4 h-4 text-destructive" />
-                    <span className="text-sm">High Temperature</span>
-                  </div>
-                )}
-                {sensorData.vibration > 4 && (
-                  <div className="flex items-center gap-2 p-2 bg-yellow-500/10 rounded">
-                    <Activity className="w-4 h-4 text-yellow-500" />
-                    <span className="text-sm">High Vibration</span>
-                  </div>
-                )}
-                {sensorData.emissions > 60 && (
-                  <div className="flex items-center gap-2 p-2 bg-orange-500/10 rounded">
-                    <Wind className="w-4 h-4 text-orange-500" />
-                    <span className="text-sm">High Emissions</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white text-base">Parameters</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm">Oxygen Flow</label>
-                  <Slider
-                    value={[sensorData.oxygenFlow]}
-                    onValueChange={(value) => setSensorData(prev => ({ ...prev, oxygenFlow: value[0] }))}
-                    max={100}
-                    step={1}
-                  />
-                  <div className="text-xs text-muted-foreground">{sensorData.oxygenFlow}%</div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm">Load Percentage</label>
-                  <Slider
-                    value={[75]}
-                    max={100}
-                    step={1}
-                  />
-                  <div className="text-xs text-muted-foreground">75%</div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm">Power Level</label>
-                  <Slider
-                    value={[85]}
-                    max={100}
-                    step={1}
-                  />
-                  <div className="text-xs text-muted-foreground">85%</div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white text-base">Simulation Control</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm">Mode</label>
-                  <Select value={simulationMode} onValueChange={setSimulationMode}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="realtime">Real-time</SelectItem>
-                      <SelectItem value="simulation">Training Mode</SelectItem>
-                      <SelectItem value="failure">Failure Simulation</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {simulationMode === 'failure' && (
                   <div className="space-y-2">
-                    <label className="text-sm">Failure Scenario</label>
-                    <Select value={failureScenario || ''} onValueChange={setFailureScenario}>
+                    <div className="flex justify-between text-sm">
+                      <span>Energy Usage</span>
+                      <span>{sensorData.energy} kW</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2">
+                      <div
+                        className="bg-primary h-2 rounded-full transition-all"
+                        style={{ width: `${(sensorData.energy / 1500) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-black border-gray-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-base">Sensor List</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Temperature</span>
+                    <Badge variant="secondary">{sensorData.temperature.toFixed(1)}°C</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Emissions</span>
+                    <Badge variant="secondary">{sensorData.emissions.toFixed(0)} ppm</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Vibration</span>
+                    <Badge variant="secondary">{sensorData.vibration.toFixed(2)} Hz</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Scrap Level</span>
+                    <Badge variant="secondary">{sensorData.scrapLevel}%</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Door Status</span>
+                    <Badge variant={sensorData.doorStatus === "open" ? "default" : "secondary"}>
+                      {sensorData.doorStatus}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-black border-gray-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-base">Alerts</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {sensorData.temperature > 1500 && (
+                    <div className="flex items-center gap-2 p-2 bg-destructive/10 rounded">
+                      <AlertTriangle className="w-4 h-4 text-destructive" />
+                      <span className="text-sm">High Temperature</span>
+                    </div>
+                  )}
+                  {sensorData.vibration > 4 && (
+                    <div className="flex items-center gap-2 p-2 bg-yellow-500/10 rounded">
+                      <Activity className="w-4 h-4 text-yellow-500" />
+                      <span className="text-sm">High Vibration</span>
+                    </div>
+                  )}
+                  {sensorData.emissions > 60 && (
+                    <div className="flex items-center gap-2 p-2 bg-orange-500/10 rounded">
+                      <Wind className="w-4 h-4 text-orange-500" />
+                      <span className="text-sm">High Emissions</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="bg-black border-gray-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-base">Parameters</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm">Oxygen Flow</label>
+                    <Slider
+                      value={[sensorData.oxygenFlow]}
+                      onValueChange={(value) => setSensorData(prev => ({ ...prev, oxygenFlow: value[0] }))}
+                      max={100}
+                      step={1}
+                    />
+                    <div className="text-xs text-muted-foreground">{sensorData.oxygenFlow}%</div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm">Load Percentage</label>
+                    <Slider
+                      value={[75]}
+                      max={100}
+                      step={1}
+                    />
+                    <div className="text-xs text-muted-foreground">75%</div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm">Power Level</label>
+                    <Slider
+                      value={[85]}
+                      max={100}
+                      step={1}
+                    />
+                    <div className="text-xs text-muted-foreground">85%</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-black border-gray-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-base">Simulation Control</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm">Mode</label>
+                    <Select value={simulationMode} onValueChange={setSimulationMode}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select scenario" />
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="overheat">Overheating</SelectItem>
-                        <SelectItem value="vibration">Excessive Vibration</SelectItem>
-                        <SelectItem value="gas-leak">Gas Leak</SelectItem>
-                        <SelectItem value="power-failure">Power Failure</SelectItem>
-                        <SelectItem value="scrap-jam">Scrap Conveyor Jam</SelectItem>
+                        <SelectItem value="realtime">Real-time</SelectItem>
+                        <SelectItem value="simulation">Training Mode</SelectItem>
+                        <SelectItem value="failure">Failure Simulation</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                )}
 
-                <Button
-                  variant={emergencyMode ? "destructive" : "outline"}
-                  className="w-full"
-                  onClick={() => setEmergencyMode(!emergencyMode)}
-                >
-                  {emergencyMode ? "End Emergency" : "Trigger Emergency"}
-                </Button>
-
-                {emergencyMode && (
-                  <div className="p-3 bg-red-500/10 border border-red-500/50 rounded">
-                    <div className="text-sm font-semibold text-red-400 mb-2">EMERGENCY PROTOCOLS ACTIVE</div>
-                    <div className="text-xs text-red-300 space-y-1">
-                      <div>• Automatic shutdown initiated</div>
-                      <div>• Emergency cooling activated</div>
-                      <div>• Safety systems engaged</div>
+                  {simulationMode === 'failure' && (
+                    <div className="space-y-2">
+                      <label className="text-sm">Failure Scenario</label>
+                      <Select value={failureScenario || ''} onValueChange={setFailureScenario}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select scenario" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="overheat">Overheating</SelectItem>
+                          <SelectItem value="vibration">Excessive Vibration</SelectItem>
+                          <SelectItem value="gas-leak">Gas Leak</SelectItem>
+                          <SelectItem value="power-failure">Power Failure</SelectItem>
+                          <SelectItem value="scrap-jam">Scrap Conveyor Jam</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  )}
+
+                  <Button
+                    variant={emergencyMode ? "destructive" : "outline"}
+                    className="w-full"
+                    onClick={() => setEmergencyMode(!emergencyMode)}
+                  >
+                    {emergencyMode ? "End Emergency" : "Trigger Emergency"}
+                  </Button>
+
+                  {emergencyMode && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/50 rounded">
+                      <div className="text-sm font-semibold text-red-400 mb-2">EMERGENCY PROTOCOLS ACTIVE</div>
+                      <div className="text-xs text-red-300 space-y-1">
+                        <div>• Automatic shutdown initiated</div>
+                        <div>• Emergency cooling activated</div>
+                        <div>• Safety systems engaged</div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
 
