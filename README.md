@@ -7,19 +7,19 @@
 
 ---
 
+## 🌐 Live Link
+> Click the link to expreirnce yourself  
+
+<a href="https://ecosteel-ai.netlify.app/" target="_blank">https://ecosteel-ai.netlify.app/</a> 
+
+---
+
 ## 🎥 Demo Video – Hardware Working
 > Click the thumbnail to watch the prototype demonstration  
 
 <a href="https://drive.google.com/file/d/1zxiZm65pGy3Ws5VUDITr4HdPEtVRcUq6/view?usp=sharing" target="_blank">
   <img src="https://raw.githubusercontent.com/github/explore/main/topics/youtube/youtube.png" width="500"/>
 </a>
-
----
-
-## 🌐 Live Link
-> Click the link to expreirnce yourself  
-
-<a href="https://ecosteel-ai.netlify.app/" target="_blank" />
 
 ---
 
@@ -165,5 +165,6 @@ Made with ❤️ by EcoSteel AI
 
 ---
 #
+
 
 
