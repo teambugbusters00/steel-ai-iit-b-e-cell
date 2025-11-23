@@ -16,6 +16,13 @@
 
 ---
 
+## 🌐 Live Link
+> Click the link to expreirnce yourself  
+
+<a href="https://ecosteel-ai.netlify.app/" target="_blank" />
+
+---
+
 ## 🏭 Overview
 EcoSteel AI Lite is a **₹6,800 ESP32-based real-time monitoring system** for Indian mini-steel mills.  
 It displays live process metrics including:
@@ -158,4 +165,5 @@ Made with ❤️ by EcoSteel AI
 
 ---
 #
+
 
