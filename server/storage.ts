@@ -689,22 +689,22 @@ export class MongoStorage implements IStorage {
 // Connect to MongoDB and choose storage
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://aayush:BOMB6291@cluster0.aay9fjf.mongodb.net/';
 
-let storage: IStorage;
+// Always start with an in-memory storage so routes can use it immediately.
+let storage: IStorage = new MemStorage();
 
+// If running in production or MongoDB usage is requested, try to connect and
+// switch to MongoStorage once connected. Keep using the in-memory storage
+// until MongoDB is available to avoid `undefined` access during startup.
 if (process.env.NODE_ENV === 'production' || process.env.USE_MONGODB === 'true') {
-  // Connect to MongoDB
   mongoose.connect(MONGODB_URI)
     .then(() => {
-      console.log('Connected to MongoDB');
+      console.log('Connected to MongoDB, switching to MongoStorage');
       storage = new MongoStorage();
     })
     .catch((error) => {
       console.error('MongoDB connection error:', error);
-      console.log('Falling back to in-memory storage');
-      storage = new MemStorage();
+      console.log('Continuing with in-memory storage');
     });
-} else {
-  storage = new MemStorage();
 }
 
 export { storage };

@@ -13,6 +13,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.sendFile(path.join(__dirname, '..', 'client', 'public', 'favicon.png'));
   });
 
+  // Serve video files
+  app.get('/rr.mp4', (req, res) => {
+    res.sendFile(path.join(__dirname, 'rr.mp4'));
+  });
+
   // Handle browser extension requests to prevent 426 errors
   app.get('/hybridaction/*', (req, res) => {
     const data = {};
@@ -136,11 +141,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // WebSocket server for real-time data streaming
   const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
 
+  // Helper to check storage readiness to avoid runtime errors during startup
+  let warnedStorageNotReady = false;
+  const isStorageReady = () => {
+    // `storage` may be switched asynchronously to MongoStorage; guard against undefined
+    // and ensure required methods exist.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return typeof storage !== 'undefined' && storage && typeof storage.getFurnaces === 'function';
+  };
+
   wss.on('connection', (ws: WebSocket) => {
     console.log('Client connected to WebSocket');
 
     // Send initial data
     const sendUpdate = async () => {
+      if (!isStorageReady()) {
+        if (!warnedStorageNotReady) {
+          console.warn('Storage not ready yet - skipping initial WebSocket update');
+          warnedStorageNotReady = true;
+        }
+        return;
+      }
       if (ws.readyState === WebSocket.OPEN) {
         try {
           const [furnaces, sensors, kpis] = await Promise.all([
@@ -153,10 +175,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const extendedSensors = [
             ...sensors,
             {
+              id: "vibration",
+              name: "System Vibration",
+              type: "vibration",
+              value: Math.max(0, 5.2 + (Math.random() - 0.5) * 1),
+              unit: "Hz",
+              status: "healthy",
+              zone: "System",
+              trend: "stable",
+              lastUpdated: new Date().toISOString()
+            },
+            {
+              id: "emissions",
+              name: "CO2 Emissions",
+              type: "emissions",
+              value: Math.max(0, 45 + (Math.random() - 0.5) * 10),
+              unit: "ppm",
+              status: "healthy",
+              zone: "Environment",
+              trend: "stable",
+              lastUpdated: new Date().toISOString()
+            },
+            {
+              id: "purity",
+              name: "Scrap Purity",
+              type: "purity",
+              value: Math.max(0, Math.min(100, 94 + (Math.random() - 0.5) * 2)),
+              unit: "%",
+              status: "healthy",
+              zone: "Quality",
+              trend: "stable",
+              lastUpdated: new Date().toISOString()
+            },
+            {
+              id: "energy",
+              name: "Energy Consumption",
+              type: "energy",
+              value: Math.max(0, 1250 + (Math.random() - 0.5) * 100),
+              unit: "kW",
+              status: "healthy",
+              zone: "System",
+              trend: "stable",
+              lastUpdated: new Date().toISOString()
+            },
+            {
               id: "battery",
               name: "System Battery",
               type: "battery",
-              value: Math.max(0, Math.min(100, 85 + Math.random() * 10)),
+              value: Math.max(0, Math.min(100, 87.9 + (Math.random() - 0.5) * 5)),
               unit: "%",
               status: "healthy",
               zone: "System",
@@ -167,7 +233,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               id: "airQuality",
               name: "Air Quality Index",
               type: "airQuality",
-              value: Math.max(0, 25 + Math.random() * 30),
+              value: Math.max(0, 48.7 + (Math.random() - 0.5) * 10),
               unit: "AQI",
               status: "healthy",
               zone: "Environment",
@@ -232,6 +298,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Background simulation: Update sensor/furnace data periodically
   setInterval(async () => {
     try {
+      if (!isStorageReady()) {
+        if (!warnedStorageNotReady) {
+          console.warn('Storage not ready yet - skipping background simulation updates');
+          warnedStorageNotReady = true;
+        }
+        return;
+      }
       const furnaces = await storage.getFurnaces();
       
       // Update active furnaces with realistic fluctuations
