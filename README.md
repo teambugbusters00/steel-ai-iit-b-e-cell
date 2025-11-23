@@ -8,9 +8,9 @@
 ---
 
 ## 🌐 Live Link
-> Click the link to expreirnce yourself  
+> Click the link to experience yourself  
 
-<a href="https://ecosteel-ai.netlify.app/" target="_blank">https://ecosteel-ai.netlify.app/</a> 
+> <a href="https://ecosteel-ai.netlify.app/" target="_blank">https://ecosteel-ai.netlify.app/</a> 
 
 ---
 
@@ -165,6 +165,7 @@ Made with ❤️ by EcoSteel AI
 
 ---
 #
+
 
 
 
